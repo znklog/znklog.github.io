@@ -1,0 +1,28 @@
+---
+import { render, type CollectionEntry } from "astro:content";
+import Base from "../../layouts/Base.astro";
+
+interface Props {
+    post?: CollectionEntry<"posts">;
+    frontmatter?: {
+        title?: string;
+        description?: string;
+        updated?: string;
+    };
+}
+
+const { post, frontmatter } = Astro.props;
+const title = post?.data.title ?? frontmatter?.title ?? post?.id;
+const description = post?.data.description ?? frontmatter?.description;
+const updated = post?.data.updated ?? frontmatter?.updated;
+const { Content } = post ? await render(post) : { Content: undefined };
+---
+
+<Base>
+    <article>
+        {title && <h1>{title}</h1>}
+        {description && <p>{description}</p>}
+        {updated && <time datetime={updated}>{updated}</time>}
+        {post && Content ? <Content /> : <slot />}
+    </article>
+</Base>

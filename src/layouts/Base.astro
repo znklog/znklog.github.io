@@ -1,0 +1,165 @@
+---
+import "reset-css";
+---
+
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content="ZNKLOG.kr 개인 홈페이지 겸 블로그" />
+    <title>ZNKLOG.kr</title>
+  </head>
+  <body>
+    <div id="sidebar">
+        <header>
+            <h1>ZNKLOG.kr</h1>
+        </header>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/posts">Posts</a></li>
+            </ul>
+        </nav>
+        <footer>
+            <p>&copy; 2023 ZNKLOG.kr. All rights reserved.</p>
+        </footer>
+    </div>
+    <div id="mainview">
+        <main>
+            <slot />
+        </main>
+    </div>
+    <div id="sidebar-toggle">
+        <button onclick="document.getElementById('sidebar').classList.toggle('open');">☰</button>
+    </div>
+  </body>
+</html>
+
+<style>
+    @font-face {
+        font-family: "NanumSquareRound";
+        src: url("/fonts/NanumSquareRound-Regular.woff2") format("woff2");
+        font-weight: 400;
+        font-style: normal;
+        font-display: block;
+    }
+
+    @font-face {
+        font-family: "D2Coding";
+        src: url("/fonts/D2Coding-Regular.woff2") format("woff2");
+        font-weight: 400;
+        font-style: normal;
+        font-display: block;
+    }
+
+    body {
+        font-family: "NanumSquareRound", sans-serif;
+    }
+
+    pre,
+    code,
+    kbd,
+    samp {
+        font-family: "D2Coding", monospace;
+    }
+
+    div {
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* Internet Explorer 10+ */
+    }
+
+    div::-webkit-scrollbar {
+        display: none; /* Chrome, Safari, Opera */
+    }
+
+    html,
+    body {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        overflow: hidden;
+        background-color: #fff;
+    }
+
+    #sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 340px;
+        z-index: 100;
+        transition: transform 0.3s ease-in-out;
+        background-color: #ccc;
+    }
+
+    #mainview {
+        position: fixed;
+        top: 0;
+        left: 340px;
+        right: 0;
+        bottom: 0;
+        z-index: 10;
+        overflow-y: scroll;
+        background-color: #eee;
+    }
+
+    #sidebar-toggle {
+        position: fixed;
+        top: 16px;
+        right: 16px;
+        height: 32px;
+        width: 32px;
+        z-index: 200;
+        display: none;
+    }
+
+    @media (max-width: 1023px) {
+        #sidebar {
+            transform: translateX(-100%);
+        }
+
+        #sidebar.open {
+            transform: translateX(0);
+        }
+
+        #mainview {
+            left: 0;
+        }
+
+        #sidebar-toggle {
+            display: block;
+        }
+    }
+
+    #sidebar {
+        display: flex;
+        flex-direction: column;
+    }
+
+    header,
+    nav,
+    footer,
+    main {
+        padding: 16px;
+    }
+
+    header {
+        flex: 0 0 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    nav {
+        flex: 1 1 auto;
+        /* overflow-y: auto; */
+    }
+    footer {
+        flex: 0 0 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+</style>

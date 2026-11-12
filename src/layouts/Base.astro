@@ -53,35 +53,42 @@ import "reset-css";
         font-display: block;
     }
 
-    body {
-        font-family: "NanumSquareRound", sans-serif;
+    :global(:root) {
+        color-scheme: light;
+        --page-background: #f3f6fa;
+        --surface: #ffffff;
+        --text-primary: #202c3e;
+        --text-secondary: #68788e;
+        --accent: #3d6fa8;
+        --border: #e1e7f0;
     }
 
-    pre,
-    code,
-    kbd,
-    samp {
-        font-family: "D2Coding", monospace;
+    :global(*) {
+        box-sizing: border-box;
     }
 
-    div {
-        scrollbar-width: none; /* Firefox */
-        -ms-overflow-style: none; /* Internet Explorer 10+ */
-    }
-
-    div::-webkit-scrollbar {
-        display: none; /* Chrome, Safari, Opera */
-    }
-
-    html,
-    body {
+    :global(html),
+    :global(body) {
         position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
+        inset: 0;
         overflow: hidden;
-        background-color: #fff;
+        margin: 0;
+        background: var(--page-background);
+        color: var(--text-primary);
+    }
+
+    :global(body) {
+        font-family: "NanumSquareRound", sans-serif;
+        font-size: 16px;
+        line-height: 1.65;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    :global(pre),
+    :global(code),
+    :global(kbd),
+    :global(samp) {
+        font-family: "D2Coding", monospace;
     }
 
     #sidebar {
@@ -89,35 +96,134 @@ import "reset-css";
         top: 0;
         left: 0;
         bottom: 0;
-        width: 340px;
+        width: 288px;
         z-index: 100;
-        transition: transform 0.3s ease-in-out;
-        background-color: #ccc;
+        display: flex;
+        flex-direction: column;
+        background: #1f2e43;
+        color: #f5f7fa;
+        box-shadow: 8px 0 32px rgb(20 35 58 / 10%);
+        transition: transform 0.25s ease;
     }
 
     #mainview {
         position: fixed;
         top: 0;
-        left: 340px;
+        left: 288px;
         right: 0;
         bottom: 0;
         z-index: 10;
-        overflow-y: scroll;
-        background-color: #eee;
+        overflow-y: auto;
+        background: var(--page-background);
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    #mainview::-webkit-scrollbar {
+        display: none;
     }
 
     #sidebar-toggle {
         position: fixed;
         top: 16px;
         right: 16px;
-        height: 32px;
-        width: 32px;
+        height: 44px;
+        width: 44px;
         z-index: 200;
         display: none;
     }
 
+    header,
+    nav,
+    footer {
+        padding: 24px;
+    }
+
+    header {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        min-height: 104px;
+        border-bottom: 1px solid rgb(255 255 255 / 10%);
+    }
+
+    header h1 {
+        margin: 0;
+        color: #fff;
+        font-size: 1.3rem;
+        letter-spacing: 0.02em;
+    }
+
+    nav {
+        flex: 1 1 auto;
+        padding-top: 20px;
+    }
+
+    nav ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    nav li + li {
+        margin-top: 8px;
+    }
+
+    nav a {
+        display: block;
+        padding: 11px 14px;
+        color: #d3deec;
+        font-size: 0.98rem;
+        text-decoration: none;
+        transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    nav a:hover,
+    nav a:focus-visible {
+        background: rgb(255 255 255 / 10%);
+        color: #fff;
+        outline: none;
+    }
+
+    footer {
+        flex: 0 0 auto;
+        border-top: 1px solid rgb(255 255 255 / 10%);
+        color: #9eafc5;
+        font-size: 0.78rem;
+    }
+
+    footer p {
+        margin: 0;
+    }
+
+    #mainview > main {
+        width: 100%;
+        height: 100%;
+        padding: 0;
+    }
+
+    #sidebar-toggle button {
+        display: grid;
+        width: 44px;
+        height: 44px;
+        place-items: center;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        color: var(--text-primary);
+        box-shadow: 0 4px 16px rgb(31 46 67 / 12%);
+        cursor: pointer;
+        font: inherit;
+        font-size: 1.25rem;
+    }
+
+    #sidebar-toggle button:focus-visible {
+        outline: 3px solid rgb(61 111 168 / 35%);
+        outline-offset: 3px;
+    }
+
     @media (max-width: 1023px) {
         #sidebar {
+            width: min(288px, 86vw);
             transform: translateX(-100%);
         }
 
@@ -132,34 +238,13 @@ import "reset-css";
         #sidebar-toggle {
             display: block;
         }
+
     }
 
-    #sidebar {
-        display: flex;
-        flex-direction: column;
-    }
-
-    header,
-    nav,
-    footer,
-    main {
-        padding: 16px;
-    }
-
-    header {
-        flex: 0 0 32px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    nav {
-        flex: 1 1 auto;
-        /* overflow-y: auto; */
-    }
-    footer {
-        flex: 0 0 32px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+    @media (prefers-reduced-motion: reduce) {
+        #sidebar,
+        nav a {
+            transition: none;
+        }
     }
 </style>

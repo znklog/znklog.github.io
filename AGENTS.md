@@ -3,9 +3,70 @@
 - `ZNKLOG.kr` 도메인으로 운영할 개인 홈페이지 겸 블로그를 만든다.
 - Astro 7을 프레임워크로 사용하고 Node.js v26을 런타임으로 사용한다.
 - 콘텐츠는 블로그와 간단한 웹 앱을 중심으로 하되, 프로젝트의 목적과 콘텐츠 구성은 필요에 따라 달라질 수 있다. 현재 방향을 고정된 제약으로 취급하지 않는다.
-- 개별 웹페이지와 컴포넌트에 관한 지침은 해당 페이지나 컴포넌트가 있는 폴더의 `AGENTS.md`를 참고한다.
-- 마크다운 콘텐츠 작성 지침은 `markdowns/AGENTS.md`를 참고한다.
-- 웹페이지 및 라우팅 지침은 `src/pages/AGENTS.md`를 참고한다.
-- 포스트 렌더링과 마크다운 컬렉션 지침은 `src/components/post/AGENTS.md`를 참고한다.
-- 공통 웹사이트 프레임 지침은 `src/layouts/AGENTS.md`를 참고한다.
 - 저장소의 기존 구조와 관례를 우선하고, 프로젝트 방향에 맞는 범위에서 변경한다.
+
+## 페이지와 라우팅
+
+- Astro 페이지와 URL 라우팅은 `src/pages/`에서 관리한다.
+- 홈페이지는 `src/pages/index.md`로 작성하며 `src/components/Post.astro`를 Markdown 레이아웃으로 사용한다.
+- 포스트 상세 페이지는 `src/pages/post/[slug].astro`에서 구현하고, 포스트 렌더링은 `src/components/Post.astro`에 위임한다.
+- 포스트 콘텐츠의 파일 규칙과 메타데이터는 이 문서의 [마크다운 콘텐츠](#마크다운-콘텐츠) 및 [포스트 컴포넌트](#포스트-컴포넌트) 섹션을 따른다.
+- 정적 출력은 `/post/<slug>.html` 형식이며, 배포 호스트가 확장자가 없는 `/post/<slug>` 요청을 대응하는 파일로 제공해야 한다.
+
+## 기본 웹사이트 프레임
+
+- 모든 페이지 콘텐츠의 기본 레이아웃으로 `src/layouts/Base.astro`를 사용한다. 페이지별 콘텐츠는 레이아웃의 `<slot />`에 넣는다.
+- 기본 프레임은 사이드바와 메인 콘텐츠 영역으로 구성한다.
+- 넓은 화면에서는 사이드바를 왼쪽에 고정하고 메인 콘텐츠를 오른쪽에 둔다.
+- 화면 너비가 1023px 이하일 때는 사이드바를 숨기고 삼선 버튼으로 열고 닫는다.
+- 메인 콘텐츠 영역은 독립적으로 세로 스크롤하고 스크롤바는 감춘다.
+- CSS 초기화에는 `reset-css`를 사용한다.
+- 기본 텍스트에는 `public/fonts/NanumSquareRound-Regular.woff2`의 나눔스퀘어라운드 웹폰트를 사용한다.
+- `pre`, `code`, `kbd`, `samp`에는 `public/fonts/D2Coding-Regular.woff2`의 D2Coding 웹폰트를 사용한다.
+- 두 웹폰트는 `font-display: block`으로 등록한다.
+- 페이지 콘텐츠를 감싸는 기본 레이아웃은 `src/layouts/Base.astro`에서 관리한다.
+
+## 포스트 컴포넌트
+
+- `src/components/`의 포스트 컴포넌트는 `markdowns/` 폴더의 마크다운 콘텐츠를 포스트 형태로 표시하기 위한 용도로 만든다.
+- 포스트의 구조와 표현 방식은 이 폴더의 컴포넌트에서 관리한다.
+- 원본 마크다운 파일은 저장소 루트의 `markdowns/` 폴더에 둔다.
+- `src/content.config.ts`에서 Astro Content Collections와 `glob()` 로더로 `markdowns/`의 포스트 파일을 수집한다. 파일명과 폴더명이 `[<순서>]<slug>` 형식인 마크다운만 수집한다.
+- 포스트 마크다운의 프론트매터에는 `title`, `description`, `updated`를 반드시 포함한다. 세 필드는 모두 문자열이며 `updated`는 유효한 `yyyy-mm-dd` 날짜 문자열이어야 한다. 필드가 없거나 형식이 맞지 않으면 컬렉션 검증에서 오류가 나야 한다.
+- `src/components/Post.astro`는 포스트 컬렉션 항목이나 Astro Markdown 레이아웃의 콘텐츠를 HTML로 표시한다. 제목, 설명, 수정일 메타데이터와 본문을 렌더링하고 `src/layouts/Base.astro`를 기본 레이아웃으로 사용한다.
+- `src/pages/post/[slug].astro`는 컬렉션 항목마다 정적 포스트 경로를 생성한다. 실제 주소는 `도메인/post/slug` 형태로 만든다.
+
+### 마크다운 경로와 slug 규칙
+
+- 기본 경로 구조는 `markdowns/<카테고리>/[<순서>]<slug>.md` 형태로 한다. 카테고리와 그 하위에는 폴더가 있을 수 있으므로 `markdowns/`를 재귀적으로 탐색한다.
+- `<순서>`는 파일과 폴더의 정렬 순서를 정하기 위한 접두사이며, 대괄호 안에 둔다. 예를 들어 `[0010]something-good.md`의 slug는 `something-good`이다.
+- 파일명에 `[<순서>]` 접두사가 없는 마크다운 파일은 파싱하지 않고 건너뛴다.
+- 폴더도 `[<순서>]<slug>` 형태로 만들 수 있다. 예를 들어 `markdowns/hobby/[0010]something-good/`은 slug가 `something-good`인 포스트 폴더다.
+- 포스트 폴더는 그 안에 `index.md`가 있을 때만 포스트로 파싱한다. 폴더명에 순서 접두사가 없거나 `index.md`가 없으면 해당 폴더를 포스트로 만들지 않는다.
+- 폴더형 포스트의 이미지 등 리소스는 마크다운 파일과 같은 폴더에 둘 수 있다. 마크다운에서 `./image01.png`처럼 상대 경로로 참조한 리소스는 Astro가 처리하고 빌드 결과물에 포함하도록 한다.
+- 같은 slug를 가진 마크다운이 여러 개 있어도 별도로 탐지하거나 오류를 내지 않는다. 충돌 처리는 Astro의 기본 동작에 맡기며, 어느 항목이 최종 결과가 되는지는 보장하지 않는다.
+
+### 라우트와 정적 빌드
+
+- 파일형 및 폴더형 포스트를 모두 `/post/<slug>` 경로로 만든다. 라우트 파일은 `src/pages/post/[slug].astro`에 둔다.
+- `trailingSlash: "never"`와 `build.format: "file"` 설정으로 정적 빌드 시 `/post/<slug>.html` 파일을 생성한다. 배포 환경은 `/post/<slug>` 요청을 해당 파일에 연결해야 한다.
+
+### 홈페이지
+
+- 홈페이지는 `src/pages/index.md`로 작성하고 `Post.astro`를 Markdown 레이아웃으로 사용한다.
+- 홈페이지 프론트매터에도 `title`, `description`, `updated`를 포함한다.
+
+### 확장
+
+- 다른 Astro 파일이나 포스트 관련 컴포넌트가 `src/components/`에 추가될 수 있다. 파일별 역할과 지침은 해당 컴포넌트의 목적에 맞게 이 문서에 보완한다.
+
+## 마크다운 콘텐츠
+
+- `markdowns/` 폴더에는 포스트로 렌더링할 마크다운 원본과 포스트에 필요한 리소스를 둔다.
+- 포스트 파일과 폴더는 `markdowns/<카테고리>/[<순서>]<slug>.md` 또는 `markdowns/<카테고리>/[<순서>]<slug>/index.md` 형태로 구성한다. 카테고리 아래에 하위 폴더를 추가할 수 있다.
+- 파일명 또는 포스트 폴더명에서 `[<순서>]` 접두사는 정렬용이고, 뒤의 문자열은 URL에 쓰는 slug다.
+- 파일명이나 포스트 폴더명에 순서 접두사가 없는 마크다운은 포스트 컬렉션에서 제외된다.
+- 모든 포스트 마크다운 프론트매터에는 `title`, `description`, `updated`를 포함한다. 값은 모두 문자열이어야 하며 `updated`는 유효한 `yyyy-mm-dd` 형식으로 작성한다.
+- 폴더형 포스트의 본문 파일은 `index.md`로 한다. 이미지 등의 리소스는 이 파일과 같은 폴더에 두고 `./image01.png` 같은 상대 경로로 참조할 수 있다.
+- slug 중복은 별도로 검사하지 않는다. 중복이 있을 때의 결과는 Astro의 기본 처리에 맡긴다.
+- 홈페이지는 포스트가 아니라 `src/pages/index.md`에서 관리한다.

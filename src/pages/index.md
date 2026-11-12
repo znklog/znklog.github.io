@@ -1,5 +1,5 @@
 ---
-layout: ../components/post/Post.astro
+layout: ../components/Post.astro
 title: ZNKLOG.kr
 description: 개인 홈페이지 겸 블로그
 updated: "2026-11-11"
